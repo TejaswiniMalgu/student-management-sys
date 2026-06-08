@@ -3,16 +3,16 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="D:\FSD\Student-Management-System\frontend\style.css">
+        <link rel="stylesheet" href="style.css">
         <title>Register</title>
     </head>
     <body>
         <nav>
-            <a href="D:\FSD\Student-Management-System\frontend\index.html">HOME | </a>
-            <a href="D:\FSD\Student-Management-System\frontend\login.html">LOGIN | </a>
-            <a href="D:\FSD\Student-Management-System\frontend\register.html">REGISTER</a>
+            <a href="index.html">HOME | </a>
+            <a href="login.html">LOGIN | </a>
+            <a href="register.html">REGISTER</a>
         </nav>
-        <form action="D:\FSD\Student-Management-System\frontend\login.html" method="POST">
+        <form onsubmit="return store_local();" method="POST">
             <h2 align="center">Register Here</h2>
             <label for="username">Username:</label>
             <input id="username" type="text" placeholder="Username" required><br><br>
@@ -23,7 +23,28 @@
             <label for="email">Email:</label>
             <input id="email" type="email" placeholder="E-mail address" required><br><br>
             <button type="submit">Register</button><br><br>
-            <a href="D:\FSD\Student-Management-System\frontend\login.html"> Already a User? Login Here</a>
+            <a href="login.html"> Already a User? Login Here</a>
         </form>
+
+        <script>
+            function store_local(){
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+                var confirm_password = document.getElementById("confirm_password").value;
+                var email = document.getElementById("email").value;
+
+                if(password !== confirm_password){
+                    alert("Passwords do not match!");
+                    return false;
+                }
+
+                localStorage.setItem("username", username);
+                localStorage.setItem("password", password);
+                localStorage.setItem("email", email);
+                alert("Registration successful!");
+                location.href = "login.html";
+                return false;
+            }
+        </script>
     </body>
 </html>
