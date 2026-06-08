@@ -26,40 +26,57 @@
                 <th>Delete</th>
             </thead>
             <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>12345</td>
-                    <td>7.75</td>
-                    <td>Computer Science</td>
-                    <td><a href="edit-student.html">Edit</a></td>
-                    <td><a href="delete-student.html">Delete</a></td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>67890</td>
-                    <td>8.85</td>
-                    <td>Electrical Engineering</td>
-                    <td><a href="edit-student.html">Edit</a></td>
-                    <td><a href="delete-student.html">Delete</a></td>
-                </tr>
-                <tr>
-                    <td>Emily Johnson</td>
-                    <td>54321</td>
-                    <td>8.90</td>
-                    <td>Mechanical Engineering</td>
-                    <td><a href="edit-student.html">Edit</a></td>
-                    <td><a href="delete-student.html">Delete</a></td>
-                </tr>
-                <tr>
-                    <td>Michael Brown</td>
-                    <td>98765</td>
-                    <td>8.80</td>
-                    <td>Civil Engineering</td>
-                    <td><a href="edit-student.html">Edit</a></td>
-                    <td><a href="delete-student.html">Delete</a></td>
-                </tr>
             </tbody>
-
         </table>
     </body>
+
+    <script>
+        function getStudents() {
+            const saved = localStorage.getItem('students');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function saveStudents(students) {
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+
+        function renderStudents() {
+            const students = getStudents();
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (students.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="6" align="center">No students available. Add a student first.</td>';
+                tbody.appendChild(emptyRow);
+                return;
+            }
+
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.roll}</td>
+                    <td>${student.cgpa}</td>
+                    <td>${student.branch}</td>
+                    <td><button onclick="editStudent('${student.roll}')">Edit</button></td>
+                    <td><button onclick="deleteStudent('${student.roll}')">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editStudent(roll) {
+            window.location.href = `add-student.html?edit=${encodeURIComponent(roll)}`;
+        }
+
+        function deleteStudent(roll) {
+            if (!confirm('Delete this student?')) return;
+            const students = getStudents().filter(student => student.roll !== roll);
+            saveStudents(students);
+            renderStudents();
+        }
+
+        window.addEventListener('DOMContentLoaded', renderStudents);
+    </script>
 </html>

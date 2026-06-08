@@ -24,7 +24,7 @@
             <a href="register.html">REGISTER</a>
         </nav>
         
-        <form action="dashboard.html" method="post">
+        <form onsubmit="return validate_login();" method="post">
             <h2 align="center">Login Here</h2>
              <label for="username">Username:</label>
              <input id="username" type="text" placeholder="Username" required><br><br>
@@ -34,5 +34,24 @@
             <a href="register.html"> New User? Register Here</a>
 
         </form>
+
+        <script>
+            function validate_login(){
+                var stored_username = localStorage.getItem("username");
+                var stored_password = localStorage.getItem("password");
+
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+
+                if(username === stored_username && password === stored_password){
+                    alert("Login successful!");
+                    location.href = "dashboard.html";
+                    return false;
+                } else {
+                    alert("Invalid username or password!");
+                    return false;
+                }
+            }
+        </script>
     </body>
 </html>
