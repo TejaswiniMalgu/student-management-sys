@@ -12,7 +12,7 @@
             <a href="login.html">LOGIN | </a>
             <a href="register.html">REGISTER</a>
         </nav>
-        <form onsubmit="return store_local();" method="POST">
+        <form onsubmit="return client_validation_registration() && store_local();" method="POST">
             <h2 align="center">Register Here</h2>
             <label for="username">Username:</label>
             <input id="username" type="text" placeholder="Username" required><br><br>
@@ -29,6 +29,38 @@
 
         
         <script>
+            function client_validation_registration(){
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+                var confirm_password = document.getElementById("confirm_password").value;
+                var email = document.getElementById("email").value;
+                var regx_email = /^[a-zA-Z]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{8,}$/;
+                var regex_password=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z_].{7,19}$/
+                if((password.match(regex_password) && email.match(regx_email) && confirm_password === password) && (password.length>=8 )&& (password.length<=20 ) && (username.length > 6) ){
+                    return true
+                }
+                else if(!(username.length > 6)){
+                    alert("Username must be more than 6 characters long!")
+                    return false;
+                }
+                else if(!( password.length>=8 )&& (password.length<=20 )){
+                        alert("Password length must be 8 characters to 20 characters")
+                        return false;
+                }
+                else if(!(password.match(regex_password))){
+                    alert("please provide Strong password:Start with alphabet or underScore and include atleast one lowercase and uppercase letter along with atleast one digit and a special character")
+                    return false;
+                }
+                else if(password !== confirm_password){
+                    alert("Passwords do not match!");
+                    return false;
+                }
+                else if(!(email.match(regx_email))){
+                    alert("Please provide a valid email address!");
+                    return false;
+                }
+            }
+
             function store_local(){
                 var username = document.getElementById("username").value;
                 var password = document.getElementById("password").value;

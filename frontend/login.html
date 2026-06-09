@@ -24,7 +24,7 @@
             <a href="register.html">REGISTER</a>
         </nav>
         
-        <form onsubmit="return validate_login();" method="post">
+        <form onsubmit="return client_validate() && validate_login();" method="post">
             <h2 align="center">Login Here</h2>
 
             
@@ -38,6 +38,24 @@
         </form>
 
         <script>
+            function client_validate()
+            {
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+                
+                var regex_password=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z_].{7,19}$/
+                if((password.match(regex_password)) ){
+                    return true
+                }
+                else if(!( password.length>=8 )&& (password.length<=20 )){
+                        alert("Password length must be 8 characters to 20 characters")
+                        return false;
+                }
+                else{
+                    alert("please provide Strong password:Start with alphabet or underScore and include atleast one lowercase and uppercase letter along with atleast one digit and a special character")
+                    return false;
+                }
+            }
             function validate_login(){
                 var stored_username = localStorage.getItem("username");
                 var stored_password = localStorage.getItem("password");
