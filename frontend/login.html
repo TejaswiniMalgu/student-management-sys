@@ -24,7 +24,7 @@
             <a href="register.html">REGISTER</a>
         </nav>
         
-        <form onsubmit="return client_validate() && validate_login();" method="post">
+        <form onsubmit="return handleLogin(event)" method="post">
             <h2 align="center">Login Here</h2>
 
             
@@ -38,39 +38,50 @@
         </form>
 
         <script>
-            function client_validate()
-            {
-                var username = document.getElementById("username").value;
-                var password = document.getElementById("password").value;
-                
-                var regex_password=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z_].{7,19}$/
-                if((password.match(regex_password)) ){
-                    return true
-                }
-                else if(!( password.length>=8 )&& (password.length<=20 )){
-                        alert("Password length must be 8 characters to 20 characters")
-                        return false;
-                }
-                else{
-                    alert("please provide Strong password:Start with alphabet or underScore and include atleast one lowercase and uppercase letter along with atleast one digit and a special character")
+            async function handleLogin(event) {
+                event.preventDefault();
+                if (!client_validate()) {
                     return false;
                 }
+                return await validateLogin();
             }
-            function validate_login(){
-                var stored_username = localStorage.getItem("username");
-                var stored_password = localStorage.getItem("password");
 
+            function client_validate() {
+                var password = document.getElementById("password").value;
+                var regex_password = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z_].{7,19}$/;
+
+                if (password.length < 8 || password.length > 20) {
+                    alert("Password length must be 8 characters to 20 characters");
+                    return false;
+                }
+                if (!password.match(regex_password)) {
+                    alert("Please provide a strong password: start with a letter or underscore, and include lowercase, uppercase, digit, and special character.");
+                    return false;
+                }
+                return true;
+            }
+
+            async function validateLogin() {
                 var username = document.getElementById("username").value;
                 var password = document.getElementById("password").value;
 
-                if(username === stored_username && password === stored_password){
+                const response = await fetch("http://localhost:3000/users");
+                if (!response.ok) {
+                    alert("Unable to fetch users. Please try again.");
+                    return false;
+                }
+
+                const users = await response.json();
+                const res = users.some(u => u.username === username && u.password === password);
+
+                if (res) {
                     alert("Login successful!");
                     location.href = "dashboard.html";
                     return false;
-                } else {
-                    alert("Invalid username or password!");
-                    return false;
                 }
+
+                alert("Invalid username or password!");
+                return false;
             }
         </script>
     </body>

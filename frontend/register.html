@@ -12,7 +12,7 @@
             <a href="login.html">LOGIN | </a>
             <a href="register.html">REGISTER</a>
         </nav>
-        <form onsubmit="return client_validation_registration() && store_local();" method="POST">
+        <form onsubmit="return handleRegister(event)" method="POST">
             <h2 align="center">Register Here</h2>
             <label for="username">Username:</label>
             <input id="username" type="text" placeholder="Username" required><br><br>
@@ -34,7 +34,7 @@
                 var password = document.getElementById("password").value;
                 var confirm_password = document.getElementById("confirm_password").value;
                 var email = document.getElementById("email").value;
-                var regx_email = /^[a-zA-Z]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{8,}$/;
+                var regx_email = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 var regex_password=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z_].{7,19}$/
                 if((password.match(regex_password) && email.match(regx_email) && confirm_password === password) && (password.length>=8 )&& (password.length<=20 ) && (username.length > 6) ){
                     return true
@@ -43,7 +43,7 @@
                     alert("Username must be more than 6 characters long!")
                     return false;
                 }
-                else if(!( password.length>=8 )&& (password.length<=20 )){
+                else if(!(password.length >= 8 && password.length <= 20)){
                         alert("Password length must be 8 characters to 20 characters")
                         return false;
                 }
@@ -61,23 +61,58 @@
                 }
             }
 
-            function store_local(){
+            async function handleRegister(event) {
+                event.preventDefault();
+                if (!client_validation_registration()) {
+                    return false;
+                }
+                await store_db();
+                return false;
+            }
+
+            // function store_local(){
+            //     var username = document.getElementById("username").value;
+            //     var password = document.getElementById("password").value;
+            //     var confirm_password = document.getElementById("confirm_password").value;
+            //     var email = document.getElementById("email").value;
+
+            //     if(password !== confirm_password){
+            //         alert("Passwords do not match!");
+            //         return false;
+            //     }
+
+            //     localStorage.setItem("username", username);
+            //     localStorage.setItem("password", password);
+            //     localStorage.setItem("email", email);
+            //     alert("Registration successful!");
+            //     location.href = "login.html";
+            //     return false;
+            // }
+
+            async function store_db()
+            {
                 var username = document.getElementById("username").value;
                 var password = document.getElementById("password").value;
-                var confirm_password = document.getElementById("confirm_password").value;
                 var email = document.getElementById("email").value;
+                
+                const user={"username":username,"password":password,"email":email};
+                const response = await fetch("http://localhost:3000/users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(user)
+                });
 
-                if(password !== confirm_password){
-                    alert("Passwords do not match!");
+                if (!response.ok) {
+                    alert("Registration failed. Please try again.");
                     return false;
                 }
 
-                localStorage.setItem("username", username);
-                localStorage.setItem("password", password);
-                localStorage.setItem("email", email);
                 alert("Registration successful!");
                 location.href = "login.html";
                 return false;
+                
             }
         </script>
     </body>
